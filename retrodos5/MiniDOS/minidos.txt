@@ -3,7 +3,7 @@
      3                                  ; ----------------------------------------------------------------------------
      4                                  ; Modified from Retro DOS v5.0 'retrodos5.s' (17/07/2024) ((PCDOS 7.1 Kernel))
      5                                  ;
-     6                                  ; Last Update: 19/01/2026  (Previous: 06/08/2025)
+     6                                  ; Last Update: 29/01/2026  (Previous: 19/01/2026)
      7                                  ;
      8                                  ; ----------------------------------------------------------------------------
      9                                  ; Assembler: NASM version 2.15
@@ -53,7 +53,7 @@
     53                                  ; converted to 'retrodos5.s'. 'ibmbio7.s' is IBMBIO.COM source code file
     54                                  ; while 'retrodos5.s' is source code of Retro DOS v5 kernel file 'PCDOS.SYS'.
     55                                  ; 'retrodos5.s' includes 'ibmdos7.bin' or IBMDOS.COM as binary file.)
-    56                                  		
+    56                                  
     57                                  ; ----------------------------------------------------------------------------
     58                                  
     59                                  ; 20/12/2022 - Modifications for initiating IO.SYS by Retro DOS v2 boot sector
@@ -65,16 +65,16 @@
     65                                  ;	       ((RETRODOS.SYS/MSDOS.SYS can be loaded by a fake IO.SYS for
     66                                  ;		using it with MSDOS 5.0 boot sector & as bootable MSDOS disk.
     67                                  ;		For that, fake IO.SYS must load 'MSDOS.SYS' at 1000h:0000h.))
-    68                                  ; 		
+    68                                  ;
     69                                  ; 18/12/2022 - Modified MSDOS 5.0 IO.SYS (for using with MSDOS 5 boot sector)
     70                                  ; 09/12/2022 - Multisection binary file format (BIOSDATA & BIOSCODE sections)
     71                                  ; 01/10/2022 - Erdogan Tan (Istanbul)
     72                                  
     73                                  ;Note: This code is a part of Retro DOS 4.0 kernel source code
-    74                                  ;     (as included binary, 'IOSYS5.BIN') 
+    74                                  ;     (as included binary, 'IOSYS5.BIN')
     75                                  ;     Equivalent of MSDOS 5.0 IO.SYS, BIOSCODE and BIOSDATA and SYSINIT
     76                                  ;						        (except MSLOAD code)
-    77                                        
+    77                                  
     78                                  ;------- Retro DOS v2 (v3) boot sector loads RETRODOS.SYS (MSDOS.SYS)
     79                                  ;	 at 1000h:0000h and loader (initialization) part of RETRODOS kernel
     80                                  ;	 moves IO.SYS (DOSBIOSCODE & DOSBIOSDATA, 'IOSYS5.BIN') to 70h:0000h.
@@ -91,7 +91,7 @@
     91                                  
     92                                  ; MSBIO (IO.SYS 6.0) source files:
     93                                  ; 	MSBIO1.ASM,MSCHAR.ASM,MSDISK.ASM,MSDIOCTL.ASM,MSINT13.ASM,MSBIO2.ASM
-    94                                  ;	MSINIT.ASM,SYSINIT1.ASM,SYSCONF.ASM,SYSPRE.ASM,SYSINIT2.ASM 
+    94                                  ;	MSINIT.ASM,SYSINIT1.ASM,SYSCONF.ASM,SYSPRE.ASM,SYSINIT2.ASM
     95                                  ;	SYSIMES.ASM,POWER.ASM,PTIME.ASM,MSEND.ASM
     96                                  
     97                                  ;=============================================================================
@@ -125,7 +125,7 @@
    125                                  ;Retro DOS v3.0 <-- IBM PCDOS 3.3 & MSDOS 3.3
    126                                  ;Retro DOS v4.0 <-- MSDOS 6.21 ; 2018-2019 (*)
    127                                  ;Retro DOS v4.0 <-- MSDOS 5.0 ; 2022 (**)
-   128                                  ;Retro DOS v5.0 <-- IBM PCDOS 7.1 
+   128                                  ;Retro DOS v5.0 <-- IBM PCDOS 7.1
    129                                  
    130                                  ;-----------------------------------------------------------------------------
    131                                  ; MSDOS 6.21 IO.SYS (13/02/1994)
@@ -5473,7 +5473,7 @@
   5235 00001BEA D1E0                    		shl	ax, 1
   5236 00001BEC D1E0                    		shl	ax, 1		; int no * 4
   5237 00001BEE 89C7                    		mov	di, ax		; interrupt vector address
-  5238 00001BF0 87FE                    		xchg	si, di		; rombios interrupt vector address in si
+  5238 00001BF0 87F7                    		xchg	si, di		; rombios interrupt vector address in si
   5239                                  					; saving address in di
   5240                                  		;lodsw			; movsw
   5241                                  		;stosw
@@ -5483,7 +5483,7 @@
   5245 00001BF2 A5                      		movsw
   5246 00001BF3 A5                      		movsw		
   5247                                  
-  5248 00001BF4 87FE                    		xchg	si, di
+  5248 00001BF4 87F7                    		xchg	si, di
   5249 00001BF6 E2EF                    		loop	next_int_
   5250                                  		
   5251                                  		;pop	di
@@ -6406,7 +6406,7 @@
   6168                                  		;inc	dh		; make number of heads 1-based
   6169                                  		;mov	[num_heads], dh	; save parms returned by rom
   6170                                  		; 10/12/2023
-  6171 00001ECD 86F2                    		xchg	dl, dh
+  6171 00001ECD 86D6                    		xchg	dl, dh
   6172 00001ECF 30F6                    		xor	dh, dh
   6173 00001ED1 42                      		inc	dx		; make number of heads 1-based
   6174 00001ED2 8916[0E1A]              		mov	[num_heads], dx
@@ -6419,7 +6419,7 @@
   6181 00001ED6 88CA                    		mov	dl, cl
   6182 00001ED8 80E23F                  		and	dl, 3Fh
   6183 00001EDB 8816[121A]              		mov	[sec_trk], dl
-  6184 00001EDF 86E9                    		xchg	cl, ch
+  6184 00001EDF 86CD                    		xchg	cl, ch
   6185 00001EE1 D0C5                    		rol	ch, 1
   6186 00001EE3 D0C5                    		rol	ch, 1
   6187 00001EE5 80E503                  		and	ch, 3
@@ -6947,7 +6947,7 @@
   6709                                  ; We're running on a COMPAQ. Now look at the date code.
   6710                                  
   6711 00002075 26A1FBFF                		mov	ax, [es:0FFFBh]	; get year
-  6712 00002079 86C4                    		xchg	ah, al
+  6712 00002079 86E0                    		xchg	ah, al
   6713                                  
   6714                                  ; 11/12/2023
   6715                                  ; (PCDOS 7.1 IBMBIO.COM - BIOSDATA:22B9h)
@@ -6980,14 +6980,14 @@
   6742 0000207E 772E                    		ja	short not_compaq_patch
   6743 00002080 7218                    		jb	short do_compaq_patch
   6744 00002082 26A1F5FF                		mov	ax, [es:0FFF5h]	; get month
-  6745 00002086 86C4                    		xchg	ah, al
+  6745 00002086 86E0                    		xchg	ah, al
   6746 00002088 3D3830                  		cmp	ax, 3038h ; 02/10/2022 (NASM syntax)
   6747                                  		;cmp	ax, '08'        ; 3038h
   6748                                  					; is it	08?
   6749 0000208B 7721                    		ja	short not_compaq_patch
   6750 0000208D 720B                    		jb	short do_compaq_patch
   6751 0000208F 26A1F8FF                		mov	ax, [es:0FFF8h]	; get day
-  6752 00002093 86C4                    		xchg	ah, al
+  6752 00002093 86E0                    		xchg	ah, al
   6753 00002095 3D3430                  		cmp	ax, 3034h ; 02/10/2022 (NASM syntax)
   6754                                  		;cmp	ax, '04'        ; 3034h
   6755                                  					; is it	04?
@@ -8125,7 +8125,7 @@
   7887                                  		;mov	si, empty_dap_buff ; dap_buffer
   7888 000022C9 BE[591B]                		mov	si, dap_buffer ; empty_dap_buff 
   7889 000022CC 56                      		push	si
-  7890 000022CD 87FE                    		xchg	si, di
+  7890 000022CD 87F7                    		xchg	si, di
   7891                                  		; si = BDS
   7892                                  		; di = DAP buffer
   7893 000022CF B81000                  		mov	ax, 16
@@ -12017,7 +12017,7 @@
  11779 000003C2 91                      		xchg	ax, cx		; now time is in cx:ax
  11780 000003C3 BB0BE9                  		mov	bx, 59659
  11781 000003C6 F7E3                    		mul	bx		; multiply low half
- 11782 000003C8 87CA                    		xchg	dx, cx
+ 11782 000003C8 87D1                    		xchg	dx, cx
  11783 000003CA 92                      		xchg	ax, dx		; cx->ax, ax->dx, dx->cx
  11784 000003CB F7E3                    		mul	bx		; multiply high	half
  11785 000003CD 01C8                    		add	ax, cx		; combine overlapping products
@@ -12240,11 +12240,11 @@
  12002 000004C2 8A0E[8D04]              		mov	cl, [base_century] ; al=day,dl=month,dh=year,cl=cntry
  12003 000004C6 E81600                  		call	bintobcd	; convert "day"	to bcd
  12004                                  					; dl = bcd day,	al = month
- 12005 000004C9 86C2                    		xchg	dl, al
+ 12005 000004C9 86D0                    		xchg	dl, al
  12006 000004CB E81100                  		call	bintobcd	; dh = bcd month, al = year
- 12007 000004CE 86C6                    		xchg	dh, al
+ 12007 000004CE 86F0                    		xchg	dh, al
  12008 000004D0 E80C00                  		call	bintobcd	; cl = bcd year, al = century
- 12009 000004D3 86C1                    		xchg	cl, al
+ 12009 000004D3 86C8                    		xchg	cl, al
  12010 000004D5 E80700                  		call	bintobcd	; ch = bcd century
  12011 000004D8 88C5                    		mov	ch, al
  12012 000004DA 8F06[8904]              		pop	word [daycnt] ; restore original value
@@ -12365,7 +12365,7 @@
  12127 00000520 F7F1                    		div	cx
  12128 00000522 88D7                    		mov	bh, dl		; save the seconds
  12129 00000524 F6F1                    		div	cl		; break	into hours and minutes
- 12130 00000526 86E0                    		xchg	al, ah
+ 12130 00000526 86C4                    		xchg	al, ah
  12131                                  
  12132                                  ; time is now in ax:bx (hours, minutes, seconds, 1/100 sec)
  12133                                  
@@ -14767,7 +14767,7 @@
  14528 00000C6A D0CE                    		ror	dh, 1
  14529 00000C6C 0A36[3101]              		or	dh, [cursec]
  14530 00000C70 89D1                    		mov	cx, dx
- 14531 00000C72 86CD                    		xchg	ch, cl		;  cl =	sector,	ch = cylinder
+ 14531 00000C72 86E9                    		xchg	ch, cl		;  cl =	sector,	ch = cylinder
  14532 00000C74 8A36[3201]              		mov	dh, [curhd]	; load current head number and
  14533 00000C78 268A5504                		mov	dl, [es:di+4]	; physical drive number
  14534                                  					; [es:di+BDS.drivenum]
@@ -16151,7 +16151,7 @@
  15912                                  					; good_tracklayout
  15913 000011ED 7402                    		jz	short ionextsector
  15914                                  		
- 15915 000011EF 87CA                    		xchg	dx, cx		; HEY! We can read all secs in one blow
+ 15915 000011EF 87D1                    		xchg	dx, cx		; HEY! We can read all secs in one blow
  15916                                  ionextsector:
  15917 000011F1 51                      		push	cx
  15918 000011F2 52                      		push	dx
@@ -16440,7 +16440,7 @@
  16201 000012DA 80E503                  		and	ch, 3
  16202 000012DD D0CD                    		ror	ch, 1
  16203 000012DF D0CD                    		ror	ch, 1
- 16204 000012E1 86CD                    		xchg	ch, cl
+ 16204 000012E1 86E9                    		xchg	ch, cl
  16205 000012E3 260A4D13                		or	cl, [es:di+13h]	; [es:di+BDS.secpertrack]
  16206 000012E7 268A5504                		mov	dl, [es:di+4]	; [es:di+BDS.drivenum]
  16207 000012EB 06                      		push	es
@@ -17282,7 +17282,7 @@
  17043 00001532 BF[BD0E]                		mov	di, IOC_DC_Table
  17044                                  		;mov	di, 0C60h	; IOC_DC_Table
  17045                                  					; at 2C7h:0C60h	= 70h:31D0h
- 17046 00001535 86E0                    		xchg	al, ah		; Put minor code in AL
+ 17046 00001535 86C4                    		xchg	al, ah		; Put minor code in AL
  17047 00001537 F2AE                    		repne scasb		; Scan for minor code in AL
  17048 00001539 7505                    		jnz	short nosupport	; it was not found
  17049 0000153B B80001                  		mov	ax, 100h
@@ -18016,12 +18016,12 @@
  17777 000017B2 88CF                    		mov	bh, cl
  17778 000017B4 80E73F                  		and	bh, 3Fh		; preserve sector number
  17779 000017B7 B306                    		mov	bl, 6
- 17780 000017B9 86D9                    		xchg	cl, bl
+ 17780 000017B9 86CB                    		xchg	cl, bl
  17781 000017BB D2EB                    		shr	bl, cl		; get ms cylinder bits to ls end
  17782 000017BD 00C5                    		add	ch, al		; add in cylinder wrap
  17783 000017BF 10E3                    		adc	bl, ah		; add in high byte
  17784 000017C1 D2E3                    		shl	bl, cl		; move up to ms	end
- 17785 000017C3 86CB                    		xchg	bl, cl		; restore cylinder bits	into cl
+ 17785 000017C3 86D9                    		xchg	bl, cl		; restore cylinder bits	into cl
  17786 000017C5 08F9                    		or	cl, bh		; or in	sector number
  17787                                  no_wrap:				
  17788 000017C7 F8                      		clc
@@ -26994,7 +26994,7 @@
  26736 00001217 59                      	pop	cx				; get first buffer
  26737                                  	;mov	[es:di+buffinfo.buf_next],cx	; last->next = first
  26738 00001218 26890D                  	mov	[es:di],cx
- 26739 0000121B 87F9                    	xchg	cx,di
+ 26739 0000121B 87CF                    	xchg	cx,di
  26740                                  	;mov	[es:di+buffinfo.buf_prev],cx	; first->prev = last
  26741                                  	; 25/10/2022
  26742 0000121D 26894D02                	mov	[es:di+2],cx
@@ -32078,7 +32078,7 @@
  31812 00002069 E8A220                          call    getchr                  ; ignore end-of-image errors,
  31813 0000206C 88C4                            mov     ah,al                   ; because if there's an error
  31814 0000206E E89D20                          call    getchr                  ; fetching the line number that's
- 31815 00002071 86E0                            xchg    al,ah                   ; supposed to be there, the next
+ 31815 00002071 86C4                            xchg    al,ah                   ; supposed to be there, the next
  31816 00002073 A3[AB02]                        mov     [linecount],ax          ; getchr call will get the same error
  31817 00002076 58                              pop     ax
  31818                                  ;
@@ -36295,9 +36295,9 @@
  36029 00002B4D 89C2                    	mov	dx,ax		; DX=new:hi, AX=new:hi, TOS=old:lo, BX=0
  36030 00002B4F 58                      	pop	ax		; DX=new:hi, AX=old:lo, TOS=orig, BX=0
  36031                                  
- 36032 00002B50 87DA                    	xchg	dx,bx		; DX=0, AX=old:lo, TOS=orig, BX=new:hi
+ 36032 00002B50 87D3                    	xchg	dx,bx		; DX=0, AX=old:lo, TOS=orig, BX=new:hi
  36033 00002B52 2EF726[BF2A]            	mul	word [cs:gnradix] ; DX=carry,  AX=new:lo, TOS=orig, BX=new:hi
- 36034 00002B57 87DA                    	xchg	dx,bx		; DX=new:hi, AX=new:lo, TOS=orig, BX=carry
+ 36034 00002B57 87D3                    	xchg	dx,bx		; DX=new:hi, AX=new:lo, TOS=orig, BX=carry
  36035 00002B59 01DA                    	add	dx,bx		; DX=new:hi, AX=new:lo, TOS=orig, BX=carry
  36036 00002B5B 31DB                    	xor	bx,bx		; DX=new:hi, AX=new:lo, TOS=orig, BX=0
  36037 00002B5D C3                      	retn
@@ -41307,7 +41307,7 @@
  41041 00003974 720B                            jc	short menu_nextitem ; hit eol/eof
  41042 00003976 E8BA05                          call    skip_delim      ;
  41043 00003979 7206                            jc	short menu_nextitem ; hit eol/eof
- 41044 0000397B 87FB                            xchg    bx,di           ;
+ 41044 0000397B 87DF                            xchg    bx,di           ;
  41045 0000397D 89BF[0946]                      mov     [aoffBlockDesc+bx],di
  41046                                  
  41047                                  menu_nextitem:
@@ -42088,9 +42088,9 @@
  41822 00003CDF 5F                              pop     di              ;
  41823 00003CE0 C3                              retn			;
  41824                                  comp_almost:                    ;
- 41825 00003CE1 86E0                            xchg    al,ah           ; we don't know for sure if it's a match
+ 41825 00003CE1 86C4                            xchg    al,ah           ; we don't know for sure if it's a match
  41826 00003CE3 E8F303                          call    any_delim       ; until we verify that the second string has
- 41827 00003CE6 86E0                            xchg    al,ah           ; been exhausted also...
+ 41827 00003CE6 86C4                            xchg    al,ah           ; been exhausted also...
  41828 00003CE8 EBF5                            jmp     short comp_exit ; if we are, this call to any_delim will tell...
  41829                                  
  41830                                  ;----------------------------------------------------------------------------
@@ -44818,30 +44818,31 @@
  44447                                  		; 02/10/2023 - Retro DOS v5.0 - PCDOS 7.1 KERNEL
  44448                                  		;incbin	'IBMDOS7.BIN'
  44449                                  
- 44450                                  		; 06/08/2025
- 44451                                  		; 02/06/2025
- 44452                                  		; 10/05/2025 - 11/05/2025
- 44453                                  		; 24/04/2025
- 44454                                  		; 07/03/2025 - 16/03/2025
- 44455                                  		; 03/03/2025 - MiniDOS v1.0 - PCDOS 7.1 KERNEL
- 44456 00004D50 <bin 9838h>             		incbin	'KERNEL.BIN'
- 44457                                  
- 44458                                  ; 28/09/2023	
- 44459                                  ;msdos_bin_size equ $ - MSDOS_BIN_OFFSET
- 44460                                  
- 44461                                  align 2
- 44462                                  
- 44463                                  ; 21/12/2022
- 44464                                  ;;END_OF_KERNEL:
- 44465                                  ;END_OF_KERNEL equ $
- 44466                                  
- 44467                                  ; 28/09/2023
- 44468                                  S3SIZE equ $-$$
- 44469                                  KERNEL_SIZE equ S1SIZE+S2SIZE+S3SIZE
- 44470                                  
- 44471                                  ;=============================================================================
- 44472                                  ;	END
- 44473                                  ;=============================================================================
- 44474                                  ; Retro DOS v5.0 by Erdogan Tan (Redevelopment of PC-DOS 7.1 KERNEL via NASM)
- 44475                                  ; ------------------------------
- 44476                                  ; APRIL 2024, ISTANBUL - TURKIYE.
+ 44450                                  		; 29/01/2027
+ 44451                                  		; 06/08/2025
+ 44452                                  		; 02/06/2025
+ 44453                                  		; 10/05/2025 - 11/05/2025
+ 44454                                  		; 24/04/2025
+ 44455                                  		; 07/03/2025 - 16/03/2025
+ 44456                                  		; 03/03/2025 - MiniDOS v1.0 - PCDOS 7.1 KERNEL
+ 44457 00004D50 <bin 9838h>             		incbin	'KERNEL.BIN'
+ 44458                                  
+ 44459                                  ; 28/09/2023	
+ 44460                                  ;msdos_bin_size equ $ - MSDOS_BIN_OFFSET
+ 44461                                  
+ 44462                                  align 2
+ 44463                                  
+ 44464                                  ; 21/12/2022
+ 44465                                  ;;END_OF_KERNEL:
+ 44466                                  ;END_OF_KERNEL equ $
+ 44467                                  
+ 44468                                  ; 28/09/2023
+ 44469                                  S3SIZE equ $-$$
+ 44470                                  KERNEL_SIZE equ S1SIZE+S2SIZE+S3SIZE
+ 44471                                  
+ 44472                                  ;=============================================================================
+ 44473                                  ;	END
+ 44474                                  ;=============================================================================
+ 44475                                  ; Retro DOS v5.0 by Erdogan Tan (Redevelopment of PC-DOS 7.1 KERNEL via NASM)
+ 44476                                  ; ------------------------------
+ 44477                                  ; APRIL 2024, ISTANBUL - TURKIYE.

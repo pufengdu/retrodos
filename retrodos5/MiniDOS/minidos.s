@@ -3,7 +3,7 @@
 ; ----------------------------------------------------------------------------
 ; Modified from Retro DOS v5.0 'retrodos5.s' (17/07/2024) ((PCDOS 7.1 Kernel))
 ;
-; Last Update: 19/01/2026  (Previous: 06/08/2025)
+; Last Update: 29/01/2026  (Previous: 19/01/2026)
 ;
 ; ----------------------------------------------------------------------------
 ; Assembler: NASM version 2.15
@@ -53,7 +53,7 @@
 ; converted to 'retrodos5.s'. 'ibmbio7.s' is IBMBIO.COM source code file
 ; while 'retrodos5.s' is source code of Retro DOS v5 kernel file 'PCDOS.SYS'.
 ; 'retrodos5.s' includes 'ibmdos7.bin' or IBMDOS.COM as binary file.)
-		
+
 ; ----------------------------------------------------------------------------
 
 ; 20/12/2022 - Modifications for initiating IO.SYS by Retro DOS v2 boot sector
@@ -65,16 +65,16 @@
 ;	       ((RETRODOS.SYS/MSDOS.SYS can be loaded by a fake IO.SYS for
 ;		using it with MSDOS 5.0 boot sector & as bootable MSDOS disk.
 ;		For that, fake IO.SYS must load 'MSDOS.SYS' at 1000h:0000h.))
-; 		
+;
 ; 18/12/2022 - Modified MSDOS 5.0 IO.SYS (for using with MSDOS 5 boot sector)
 ; 09/12/2022 - Multisection binary file format (BIOSDATA & BIOSCODE sections)
 ; 01/10/2022 - Erdogan Tan (Istanbul)
 
 ;Note: This code is a part of Retro DOS 4.0 kernel source code
-;     (as included binary, 'IOSYS5.BIN') 
+;     (as included binary, 'IOSYS5.BIN')
 ;     Equivalent of MSDOS 5.0 IO.SYS, BIOSCODE and BIOSDATA and SYSINIT
 ;						        (except MSLOAD code)
-      
+
 ;------- Retro DOS v2 (v3) boot sector loads RETRODOS.SYS (MSDOS.SYS)
 ;	 at 1000h:0000h and loader (initialization) part of RETRODOS kernel
 ;	 moves IO.SYS (DOSBIOSCODE & DOSBIOSDATA, 'IOSYS5.BIN') to 70h:0000h.
@@ -91,7 +91,7 @@
 
 ; MSBIO (IO.SYS 6.0) source files:
 ; 	MSBIO1.ASM,MSCHAR.ASM,MSDISK.ASM,MSDIOCTL.ASM,MSINT13.ASM,MSBIO2.ASM
-;	MSINIT.ASM,SYSINIT1.ASM,SYSCONF.ASM,SYSPRE.ASM,SYSINIT2.ASM 
+;	MSINIT.ASM,SYSINIT1.ASM,SYSCONF.ASM,SYSPRE.ASM,SYSINIT2.ASM
 ;	SYSIMES.ASM,POWER.ASM,PTIME.ASM,MSEND.ASM
 
 ;=============================================================================
@@ -125,7 +125,7 @@
 ;Retro DOS v3.0 <-- IBM PCDOS 3.3 & MSDOS 3.3
 ;Retro DOS v4.0 <-- MSDOS 6.21 ; 2018-2019 (*)
 ;Retro DOS v4.0 <-- MSDOS 5.0 ; 2022 (**)
-;Retro DOS v5.0 <-- IBM PCDOS 7.1 
+;Retro DOS v5.0 <-- IBM PCDOS 7.1
 
 ;-----------------------------------------------------------------------------
 ; MSDOS 6.21 IO.SYS (13/02/1994)
@@ -44447,6 +44447,7 @@ IBMDOS_BIN_OFFSET: ; this offset must be paragraph aligned
 		; 02/10/2023 - Retro DOS v5.0 - PCDOS 7.1 KERNEL
 		;incbin	'IBMDOS7.BIN'
 
+		; 29/01/2027
 		; 06/08/2025
 		; 02/06/2025
 		; 10/05/2025 - 11/05/2025

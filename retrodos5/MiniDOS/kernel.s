@@ -3,7 +3,7 @@
 ; ----------------------------------------------------------------------------
 ; Modified from Retro DOS v5.0 'ibmdos7.s' (10/07/2024) ((PCDOS 7.1 Kernel))
 ;
-; Last Update: 06/08/2025 (Previous: 02/06/2025)
+; Last Update: 29/01/2026 (Previous: 06/08/2025)
 ;
 ; ----------------------------------------------------------------------------
 ; Assembler: NASM version 2.15
@@ -48,11 +48,11 @@
 ; Note:	This code is a part of Retro DOS 4.0 kernel source code
 ;	(as included binary, 'MSDOS5.BIN') 
 ;	Equivalent of MSDOS 5.0 MSDOS.SYS kernel file 
-;	
+;
 ;	((MSDOS 6.0 kernel source code has been modified by using disassembled
 ;	MSDOS 5.0 MSDOS.SYS)) -- Disassembler: HEX-RAYS IDA Pro --
 ;	((Disassembly -Reverse engineering- reference: MSDOS 6.0 kernel src))
-      
+
 ;------ Retro DOS v2 (v3) boot sector loads RETRODOS.SYS (MSDOS.SYS)
 ;	at 1000h:0000h and loader (initialization) part of RETRODOS kernel
 ;	moves IO.SYS (DOSBIOSCODE & DOSBIOSDATA, 'IOSYS5.BIN') to 70h:0000h.
@@ -96,7 +96,7 @@
 ;-----------------------------------------------------------------------------
 
 ; MSDOS 6.0 Kernel source files:
-;	MSDATA.ASM, 
+;	MSDATA.ASM,
 ; 		(MSHEAD.ASM, MSCONST.ASM,CONST2.ASM, MS_DATA.ASM,
 ;		DOSTAB.ASM, LMSTUB.ASM, WPATCH.INC, MPATCH.ASM)
 ;	MSTABLE.ASM, MSCODE.ASM, MSDOSME.ASM (DOSMES.INC), TIME.ASM,
@@ -428,7 +428,7 @@ WRAPOFFSET	EQU	0FEF0h  ; (MISC.ASM, MSDOS 6.0, 1991)
 ;	the driver creates a BPB. DOS keeps copies of some of this
 ;	information in the DPB.
 ;
-;	The BDS structure contains a BPB within it. 
+;	The BDS structure contains a BPB within it.
 
 ; 01/01/2024
 %if 0
@@ -3444,8 +3444,10 @@ RETRODOSMSG:
 	;;db	"Retro DOS v4.2 by Erdogan Tan [2023]"
 	;db	"Retro DOS v5.0 by Erdogan Tan [2024]" ; 01/01/2024
 	; 24/04/2025
-	db	"MiniDOS v1.0 (RetroDOS v5 compact) by Erdogan Tan [2025]"	 
-	db	13,10,"$", 0 
+	;db	"MiniDOS v1.0 (RetroDOS v5 compact) by Erdogan Tan [2025]"
+	; 29/01/2026
+	db	"MiniDOS v1.0 (RetroDOS v5 compact) by Erdogan Tan [2026]"
+	db	13,10,"$", 0
 
 ;============================================================================
 ; MSTABLE.ASM, MSDOS 6.0, 1991
@@ -5854,7 +5856,7 @@ INT2FDOS:
 
 	; 18/07/2018
 	; MSDOS 3.3
-	;;cmp	ah,12h	
+	;;cmp	ah,12h
 	;CMP	AH,MultDOS
 	;jz	short DispatchDOS
 	;iret
@@ -7659,14 +7661,14 @@ international_get:
 			; FFh installed
 	CMP	AL,0FFH
 	JNZ	short interr		; not in memory
-	
+
 	; 06/01/2024
 	mov	ax,1403h		; set country info
 
 	;cmp	bp,0
 	or	bp,bp			; GetCntry ?
 	JNZ	short stcdpg
-	
+
 	;CallInstall GetCntry,NLSFUNC,4	; get country info
 	;mov	ax,1404h
 	inc	ax	; AX = 1404h ; get country info
@@ -7679,7 +7681,7 @@ international_get:
 	;		; Return: AL = status
 	;
 	;JMP	short chkok
-	
+
 	;nop
 
 stcdpg:
@@ -7924,23 +7926,25 @@ chkyes: 				;
 	JNZ	short capstring		; no
 
 	XOR	AX,AX			; presume NO
-		      
+
 ;hkn; NLS_YES, NLS_NO, NLS_yes2, NLS_no2 is defined in msdos.cl3 which is
 ;hkn; included in yesno.asm in the DOSCODE segment.
 
+	; 29/01/2026 - Retro DOS v5.0 BugFix
+	; cs: -> ss:
 	; 06/08/2018 - Retro DOS v3.0
 	; 13/05/2019 - Retro DOS v4.0
 	;cmp	dl,'Y'
-	CMP	DL,[cs:NLS_YES]		; is 'Y' ?
+	CMP	DL,[ss:NLS_YES]		; is 'Y' ?
 	JZ	short yesyes		; yes
 	;cmp	dl,'y'
-	CMP	DL,[cs:NLS_yes2]	; is 'y' ?
+	CMP	DL,[ss:NLS_yes2]	; is 'y' ?
 	JZ	short yesyes		; yes
 	;cmp	dl,'N'
-	CMP	DL,[cs:NLS_NO]		; is  'N'?
+	CMP	DL,[ss:NLS_NO]		; is  'N'?
 	JZ	short nono		; no
 	;cmp	dl,'n'
-	CMP	DL,[cs:NLS_no2]		; is 'n' ?
+	CMP	DL,[ss:NLS_no2]		; is 'n' ?
 	JZ	short nono		; no
 ;dbcs_char:				;
 	INC	AX			; not YES or NO
@@ -7948,7 +7952,7 @@ yesyes: 				;
 	INC	AX			; return 1
 	; 15/12/2022
 	; 09/01/2024 - Retro DOS v5.0
-nono:	
+nono:
 	;jmp	short SYS_RET_OK_jmp	;
 	; 06/11/2022 (MSDOS 5.0 MSDOS.SYS compatibility)
 	; 09/01/2024
@@ -8169,7 +8173,7 @@ NLSNXT:
 
 	CMP	AL,0			; success ?
 	JNZ	short NLSERROR
-	;mov	ax,[si+48h] ; 13/05/2019 
+	;mov	ax,[si+48h] ; 13/05/2019
 	MOV	AX,[SI+DOS_CCDPG.ccSysCodePage]
 			; ax = sys code page id;smr;use ds;
 			;BUGBUG;check whether DS is OK after the above calls
@@ -8258,11 +8262,11 @@ OK_RETURN:
 setglpg:
 	CMP	AL,2
 	JNZ	short nomem
-	
+
 	;;mov	dx,[si+63h] ; MSDOS 3.3
 	;mov	dx,[si+68h] ; MSDOS 6.0
 	MOV	DX,[SI+DOS_CCDPG.ccDosCountry]	;smr;use ds
-	
+
 	;CallInstall NLSInstall,NLSFUNC,0 ; check if NLSFUNC in memory
 	mov     ax,1400h
 	int     2Fh	; - Multiplex - NLSFUNC.COM - INSTALLATION CHECK
@@ -51365,7 +51369,7 @@ INULDEV:
 ; 17/01/2024
 ;WinoldPatch2:
 ;	;db	8 dup (?)	; M044
-;	times	8 db 0	
+;	times	8 db 0
 
 	; 24/03/2024 (PCDOS 7.1 IBMDOS.COM)
 	db	0
@@ -53024,7 +53028,7 @@ unknown_zero_dd:
 ;============================================================================
 ; 27/04/2019 - Retro DOS 4.0
 
-;mpatch.asm -- holds data patch location for callouts 
+;mpatch.asm -- holds data patch location for callouts
 ; -- allocate cluster in rom.asm
 ;
 ; This area is pointed to by OffsetMagicPatch[609h] in fixed DOS data.
