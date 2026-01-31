@@ -4,7 +4,7 @@
 ; ----------------------------------------------------------------------------
 ; Primary DOS Partition (FAT File System) Format Utility for Retro DOS v4 OS.
 ; ----------------------------------------------------------------------------
-; Last Update: 04/05/2024 (Previous: 28/10/2023)
+; Last Update: 29/01/2026 (Previous: 14/07/2024)
 ; ----------------------------------------------------------------------------
 ; Beginning: 28/10/2023
 ; ----------------------------------------------------------------------------
@@ -1607,8 +1607,17 @@ FAT16_f_10:
 	; AX = [BPB_NumFATs] * [BPB_FATSz16]
 	mov	cx, [bp+0Eh]	; [BPB_RsvdSecCnt] ; 1
 	add	cx, ax
+	
+	; 14/07/2024 (bugfix)
+	mov	[bp+42h], cx	; bsRootDirStart
+	mov	bx, [root_dir_secs]
+	mov	[bp+44h], bx	; bsRootDirSects
+	;mov	word [bp+46h], 16 ; bsDirEntsPerSec
+
 	; CX = [BPB_RsvdSecCnt]+([BPB_NumFATs]*[BPB_FATSz16])
-	add	cx, [root_dir_secs] ; + RootDirsectors
+	;add	cx, [root_dir_secs] ; + RootDirsectors
+	; 14/07/2024
+	add	cx, bx
 	sub	bx, bx ; BX = 0
 	; BX_CX = [BPB_RsvdSecCnt]+([BPB_NumFATs]*[BPB_FATSz16])
 	;	  + RootDirSectors
@@ -1624,6 +1633,10 @@ FAT16_f_11:
 	sbb	dx, bx
 	mov	[data_start], cx
 	mov	[data_start+2], bx
+
+	; 14/07/2024 (bugfix)
+	mov	 [bp+40h], cx	; bsDataStart
+	
 	; DX_AX = Data sectors
 	mov	[data_sectors], ax
 	mov	[data_sectors+2], dx
@@ -1865,11 +1878,23 @@ FAT12_f_1:
 
 	;mov	cx, 33
 	mov	cx, [root_dir_secs]
-	add	cx, [bp+0Eh]	; [BPB_RsvdSecCnt] ; 1
+
+	; 14/07/2024 (bugfix)
+	; ax = 2 * FAT size (in sectors)
+	add	ax, [bp+0Eh] ; total FAT sectors + reserved sectors	
+	mov	[bp+42h], ax	; bsRootDirStart
+	mov	[bp+44h], cx	; bsRootDirSects
+	;mov	word [bp+46h], 16 ; bsDirEntsPerSec
+
+	; 14/07/2024
+	;add	cx, [bp+0Eh]	; [BPB_RsvdSecCnt] ; 1
 		; cx = root directory sectors + reserved sectors
 	add	cx, ax
+		; cx = root dir sects + rsvd sects + total FAT sects
+
 	; CX = [BPB_RsvdSecCnt]+([BPB_NumFATs]*[BPB_FATSz16])
 	;	  + RootDirSectors
+
 	mov	ax, [bp+13h]	; [BPB_TotSec16]
 	sub	ax, cx
 		 ; AX = data sectors
@@ -1886,6 +1911,10 @@ FAT12_f_9:
 	xor	dx, dx
 	mov	[data_start], cx
 	mov	[data_start+2], dx ; 0
+	
+	; 14/07/2024 (bugfix)
+	mov	 [bp+40h], cx	; bsDataStart
+
 	; DX_AX = Data sectors
 	mov	[data_sectors], ax
 	mov	[data_sectors+2], dx ; 0
@@ -2216,7 +2245,7 @@ RD_FAT12_hd_bs:
 RD_FAT16_hd_bs: 
 	incbin	'RD4HDBS.BIN' ; 24/10/2023
 RD_FAT32_hd_bs: 
-	incbin	'RD5HDBS3.BIN' ; 29/04/2024
+	incbin	'RD5HDBS3.BIN' ; 29/01/2026
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;  messages
@@ -2236,7 +2265,7 @@ RD_Welcome:
 	db 0Dh, 0Ah
 	db 'Retro DOS v4 Hard Disk Partition Formatting Utility '
 	db 0Dh, 0Ah
-	db 'v1.1.240504 (c) Erdogan TAN 2020-2024 '
+	db 'v1.1.260129 (c) Erdogan TAN 2020-2026 '
 	db 0Dh,0Ah
 	db 0Dh,0Ah
 	db 'Usage: hdformat <drive> '
