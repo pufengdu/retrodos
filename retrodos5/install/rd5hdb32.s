@@ -2,7 +2,7 @@
 ; RD5HDB32.ASM (RD5HDB32.COM) - Retro DOS v5 Hard Disk FAT32 Boot Sect Utility
 ;							  (for MSDOS/WINDOWS)
 ; ----------------------------------------------------------------------------
-; Last Update: 03/05/2024
+; Last Update: 29/01/2026
 ; ----------------------------------------------------------------------------
 ; Beginning: 03/05/2024
 ; ----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ partition_table equ 1BEh
 
 	mov	si, 80h			; PSP command tail
 	mov	cl, [si]
-	or	cl, cl                               
+	or	cl, cl
 	jz	short T_9		; jump if zero
 T_1:
 	inc	si
@@ -112,7 +112,7 @@ T_2:
 	jna	short T_6
 	cmp	al, 'Z'
 	jna	short T_9
-T_4:	
+T_4:
 	cmp	al, 'c'			; a - z 
 	jb	short T_9
 	je	short T_5
@@ -162,7 +162,7 @@ T_10:
 
 	or	ah, ah
 	jnz	short T_12		; error
-	
+
 	mov	al, cl
 	and	al, 63
 	mov	[sectors], al
@@ -204,14 +204,14 @@ T_12:
 	jmp	T_35 			; terminate
 
 T_13:
-	cmp	word [MBR+510], 0AA55h 
+	cmp	word [MBR+510], 0AA55h
         jne	short T_12
 
 	mov	si, MBR+(partition_table+ptFileSystemID)
 T_14:
 	call	validate_dos_FAT32_partition
 	jnc	short T_15
- 
+
 	add	si, 16
 	cmp	si, MBR+partition_table+ptFileSystemID+64
 	jb	short T_14
@@ -219,14 +219,14 @@ T_14:
 	mov	si, RD5_fatp_notfound
 	call	print_msg
 	jmp	T_35
-	
+
 T_15:
 	; valid primary dos (FAT32) partition
 	; ah = partition type
 
 	; 03/05/2024
 	mov	byte [fattype], 3  ; FAT32
-T_17:	
+T_17:
 	mov	byte [RetryCount], 5
 
 	add	si, ptStartSector-ptFileSystemID
@@ -301,13 +301,13 @@ T_21:
 	;popa
 	db	61h
 	jnc     short T_22
-                
+
         dec	byte [RetryCount]
 	jz	T_12
 
 	mov	ax, [dosp_start]
 	mov	dx, [dosp_start+2]
-	jmp	short T_21	 
+	jmp	short T_21
 
 T_22:
 	cmp	word [bootsector+510], 0AA55h
@@ -334,7 +334,7 @@ T_24:
 	cmp	byte [bootsector+BS_FilSysType+4], '2'
 	jne	short T_23
 
-	mov	cx, 82-11 ; byte count to be copied 
+	mov	cx, 82-11 ; byte count to be copied
 T_25:
 	mov	si, RD5_Do_you_want
 	call	print_msg
@@ -381,10 +381,10 @@ T_27:
 	stosw
 	mov	ax, 'OS'
 	stosw
-	
+
 	; DI points to retrodosv5bs+bsBytesPerSec
 	mov	si, bootsector+bsBytesPerSec
-	
+
 	rep	movsb
 
 	mov	si, RD5_PressKeyWhenReady
@@ -406,26 +406,26 @@ T_29:
 T_30:
 	;xor	ax, ax
 	;int	1Ah			; get time of day
-	
+
 	;mov	si, volume_id
-	
+
 	;mov	[si], dx
 	;mov	[si+2], cx		; set unique volume ID
-	
+
 	;mov	ah, 02h			; Return Current Time
 	;int	1Ah
 	;xchg	ch, cl
 	;xchg	dh, dl
-	
+
 	;add	cx, dx
 	;add	[si+2], cx
-		
+
 	;mov	ah, 04h			; Return Current Date
 	;int	1Ah
 	;xchg	ch, cl
 	;xchg	dh, dl
-	
-	;add	cx, dx  
+
+	;add	cx, dx
 	;add	[si+2], cx
 
 	;mov	ax, [vol_id]
@@ -433,8 +433,8 @@ T_30:
 
 	mov	bx, RD5_FAT32_hd_bs	; location of boot code
 	; es: bx = boot sector buffer address
-	
-	;mov	si, bx	
+
+	;mov	si, bx
 	;add	si, bsVolumeID
 
 	;cmp	byte [fattype], 3
@@ -528,7 +528,7 @@ T_36:
 	;cmp	al, 'N'
 	;je	short T_35
 	;cmp	al, 'C'-40h
-	;je	short T_35                   
+	;je	short T_35
 	;cmp	al, 27
 	;je	short T_35
 	;jmp	short T_36
@@ -608,9 +608,9 @@ T_44:
 	;jnb	short T_37
 	xchg	cl, ch
 	shl	cl, 6
-	or	cl, al	
+	or	cl, al
 	jmp	T_31
-		 
+
 get_answer:
 	xor	ax, ax
 	int	16h			; wait for keyboard command
@@ -633,9 +633,9 @@ _YES_:
 	retn
 
 validate_dos_FAT32_partition:
-	
+
 	; INPUT:
-	;   si = partition table entry offset + file system ID 
+	;   si = partition table entry offset + file system ID
 	; OUTPUT:
 	;   cf = 0 -> ah = primary DOS partition ID
 	;			 (0Bh or 0Ch)
@@ -672,7 +672,7 @@ align 2
 
 	; 03/05/2024
 RD5_FAT32_hd_bs:
-	incbin	'RD5HDBS3.BIN'  ; 29/04/2024
+	incbin	'RD5HDBS3.BIN'  ; 29/01/2029
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;  messages
@@ -691,7 +691,7 @@ RD5_Welcome:
 	db 0Dh, 0Ah
 	db 'Retro DOS v5.0 Hard Disk (FAT32) Boot Sector Update Utility '
 	db 0Dh, 0Ah
-	db "RDHDBOOT v4.0.240420  (c) Erdogan TAN 2018-2024"
+	db "RDHDBOOT v4.0.260129  (c) Erdogan TAN 2018-2026"
 	db 0Dh,0Ah
 	db 0Dh,0Ah
 	db 'Usage: rd5hdb32 c: (or d:)'
@@ -699,7 +699,7 @@ RD5_Welcome:
 
 RD5_Do_you_want:
 	db 0Dh, 0Ah
-	db "WARNING ! ", 0Dh, 0Ah 
+	db "WARNING ! ", 0Dh, 0Ah
 	db "(If you say 'Yes', MSDOS or WINDOWS will not be bootable on this disk !) "
 	db 0Dh, 0Ah, 0Dh, 0Ah
 	; 03/05/2024
@@ -751,7 +751,7 @@ lba:	db 0
 
 align 4
 
-CHS_limit: 
+CHS_limit:
 	dw 0
 	;dw 0
 

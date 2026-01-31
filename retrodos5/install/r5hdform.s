@@ -4,7 +4,7 @@
 ; ----------------------------------------------------------------------------
 ; Primary DOS Partition (FAT File System) Format Utility for Retro DOS v5 OS.
 ; ----------------------------------------------------------------------------
-; Last Update: 15/07/2024
+; Last Update: 29/01/2026
 ; ----------------------------------------------------------------------------
 ; Beginning: 28/10/2023
 ; ----------------------------------------------------------------------------
@@ -13,7 +13,7 @@
 ; Modified from 'rdhdform.s'(RDHDFORM.COM) source code by Erdogan Tan
 ; (04/05/2024) - Retro DOS v4 hard/fixed disk formatting utility -
 ; ****************************************************************************
-; Copyright (C) 2020-2024 Erdogan TAN 
+; Copyright (C) 2020-2024 Erdogan TAN
 ; ****************************************************************************
 ; assembling: nasm r5hdform.s -l r5hdform.txt -o R5HDFORM.COM -Z error.txt
 
@@ -148,7 +148,7 @@ R_2:
 
 	cmp	byte [si], ':'
 	je	short T_3
-	
+
 	cmp	byte [si], ' '
 	jna	short R_3
 
@@ -278,7 +278,7 @@ T_11:
 	int	13h
 	;jc	short T_37
 	jnc	short T_13		; read masterboot sector, OK
-	
+
  	; reset hard disk(s)
 	xor	ah, ah
 	;mov	dl, [drv]
@@ -293,7 +293,7 @@ T_11:
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 T_12:
-	mov	byte [zbyte], 0 ; message without (Y/N) question 
+	mov	byte [zbyte], 0 ; message without (Y/N) question
 
 	call	T_37			; write error message
 	jmp	T_35 			; terminate
@@ -303,7 +303,7 @@ T_13:
         jne	short T_12
 
 	mov	si, MBR+(partition_table+ptFileSystemID)
-	
+
 	; ah = 0
 	mov	al, [partition]
 	and	al, al	; 0 ?
@@ -314,11 +314,11 @@ T_13:
 	add	si, ax 
 T_14:
 	call	validate_primary_dos_partition
-	jnc	short T_15	
+	jnc	short T_15
 	
 	cmp	byte [partition], 0
 	ja	short R_5
- 
+
 	add	si, 16
 	cmp	si, MBR+partition_table+ptFileSystemID+64
 	jb	short T_14
@@ -514,7 +514,7 @@ T_29:
 	mov	si, RD_CRLF
 	call	print_msg
 
-	; Clear buffer in BSS 
+	; Clear buffer in BSS
 	mov	di, HDFORMAT_FATBUFFER
 	xor	ax, ax
 	mov	cx, 256
@@ -600,9 +600,9 @@ _YES_:
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 validate_primary_dos_partition:
-	
+
 	; INPUT:
-	;   si = partition table entry offset + file system ID 
+	;   si = partition table entry offset + file system ID
 	; OUTPUT:
 	;   cf = 0 -> ah = primary DOS partition ID
 	;			 (01h,04h,06h,0Bh,0Ch,0Eh)
@@ -672,10 +672,10 @@ write_chs_sector:
 	;jmp	short chs_rw
 chs_rw:
 	push	si
-        push	cx        
+        push	cx
 chs_rw_0:
-	mov	di, 5                    
-chs_rw_1:               
+	mov	di, 5
+chs_rw_1:
 	push	dx	; Linear sector #
 	push	ax	; DX_AX = Linear address (sectors)
 	mov	cx, [sectors]
@@ -705,13 +705,13 @@ chs_rw_2:
 			; AL-sec num CH-track CL-sec
 			; DH-head DL-drive ES:BX-buffer
 			; CF-flag AH-status AL-sectors written/read
-			; If CF = 1 then AH = Error code (>0) 
-        
+			; If CF = 1 then AH = Error code (>0)
+
 	;mov	[error], ah
 	jnc     short chs_rw_3
 	dec	di
-	jz	short chs_rw_3 
-        
+	jz	short chs_rw_3
+
 	xor	ah, ah
 	;mov	dl, [drv]
 	int	13h	; BIOS Service func (ah) = 0
@@ -762,18 +762,18 @@ lba_rw_1:
 
 	mov     si, sp
 	mov     dl, [drv]
-	xor	al, al	; verify off 
+	xor	al, al	; verify off
 lba_rw_2:
 	mov     ah, [rw] ; 42h = LBA read, 43h = LBA write
-	;xor	al, al	; verify off 
+	;xor	al, al	; verify off
 	int     13h
 
 	;mov	[error], ah
 	jnc     short lba_rw_3
 
 	dec	di
-	jz	short lba_rw_3 
-        
+	jz	short lba_rw_3
+
 	xor	ah, ah
 	;mov	dl, [drv]
 	int	13h	; BIOS Service func (ah) = 0
@@ -798,22 +798,24 @@ lba_rw_3:
 ; ((TRDOS 386 criter))
 ; Minimum size of FAT32 FS = 65525 + 512 + 512 + 32
 ; >= 66581 sectors (or >= 65525 data clusters)
-	
+
+	; 29/01/2026
 format_FAT32_fs:
-	;mov	ax, 000Ch ; db 0Ch, 00h ; 'or al, 0'
-	;cmp	dl, al ; 0Ch
-	;je	short FAT32_lba_format
-	;mov	ax, 0C00Bh ; db 0Bh, 0C0h ; 'or ax, ax'
-;FAT32_lba_format:
+	mov	ax, 000Ch ; db 0Ch, 00h ; 'or al, 0'
+	cmp	dl, al ; 0Ch
+	je	short FAT32_lba_format
+	mov	ax, 0C00Bh ; db 0Bh, 0C0h ; 'or ax, ax'
+FAT32_lba_format:
 	; Put TRDOS 386 FAT32 partition magic word 
 	; at offset 5Ah, in TRDOS386 FAT32 boot sector 0.
 	mov	bp, RD_FAT32_hd_bs
 	lea	di, [bp+3]
 	mov	si, bs_oem_name
 	mov	cx, 4
-	rep	movsw 
-	;mov	[bp+5Ah], ax	; [loc_5A]
-	mov	word [bp+5Ah], 0C00Bh
+	rep	movsw
+	; 29/01/2026
+	mov	[bp+5Ah], ax	; [loc_5A]
+	;mov	word [bp+5Ah], 0C00Bh
 	mov	ax, [sectors]
 	mov	[bp+18h], ax	; [BPB_SecPerTrk]
 	mov	ax, [heads]
@@ -826,21 +828,21 @@ format_FAT32_fs:
 	mov	[bp+20h], ax	; [BPB_TotSec32]
 	mov	dx, [dosp_size+2]
 	mov	[bp+22h], dx	; [BPB_TotSec32+2]
-	
+
 	; Sectors per cluster calculation
 	; (According to MS FAT32 FS specification.)
 	mov	cl, 8  ; 8 sectors per cluster
 	cmp	dx, 8  ; >= 532480 sectors
 	ja	short FAT32_f_2 ; 8 sectors per cluster
-	jb	short FAT32_f_1 ; 1 sector per cluster	
+	jb	short FAT32_f_1 ; 1 sector per cluster
 	cmp	ax, 2000h ; dx_ax = (8*65536)+8192
 	jnb	short FAT32_f_2
 FAT32_f_1:
-	mov	cl, 1	; 1 sector per cluster		
+	mov	cl, 1	; 1 sector per cluster
 FAT32_f_2:
 	mov	[bp+0Dh], cl	 ; [BPB_SecPerClus]
-	;mov	byte [bp+10h], 2 ; [BPB_NumFATs] 
-	;mov	word [bp+0Eh], 32 ; [BPB_RsvdSecCnt] 
+	;mov	byte [bp+10h], 2 ; [BPB_NumFATs]
+	;mov	word [bp+0Eh], 32 ; [BPB_RsvdSecCnt]
 
 	; Calculating FAT size in sectors
 	; (According to MS FAT32 FS Specification, 2000)
@@ -891,7 +893,7 @@ FAT32_f_2:
 	; DX_AX = Count of clusters (rounded down)
 	mov	[cluster_count], ax
 	mov	[cluster_count+2], dx
-		
+
 	lea	di, [bp+71] ; [BS_VolLab]
 	call	write_volume_name
 	lea	si, [bp+67] ; [BS_VolID]
@@ -921,7 +923,7 @@ FAT32_f_3:
 	jc	formatting_error
 	call	write_format_percent
 	add	ax, 1
-	adc	dx, 0	
+	adc	dx, 0
 	mov	bx, RD_FAT32_hd_bs + 512
 	; ES:BX = Boot Sector 2 Buffer
 	call	write_hd_sector
@@ -999,14 +1001,14 @@ FAT32_f_6:
 	mov	[bx+8], cx
 	mov	[bx+10], cx
 	jmp	short FAT32_f_8
-FAT32_f_7:	
+FAT32_f_7:
 	push	bx
-	push	cx	
+	push	cx
 	mov	bx, HDFORMAT_FATBUFFER
 	call	write_hd_sector
 	jc	formatting_error
 	call	write_format_percent
-FAT32_f_8:	
+FAT32_f_8:
 	pop	cx
 	pop	bx
 	add	ax, 1
@@ -1037,12 +1039,12 @@ FAT32_f_9:
 	; write DATA sectors 
 	; (after root directory 1st cluster)
 	mov	cx, [data_sectors]
-	mov	bx, [data_sectors+2] 
+	mov	bx, [data_sectors+2]
 			; NOTE: Partition size must be >= 512 MB
 			;	for FAT32 FS  ((BX >= 15))
-FAT32_f_10:	
+FAT32_f_10:
 	push	bx
-	push	cx	
+	push	cx
 	mov	bx, HDFORMAT_SECBUFFER
 	call	write_hd_sector
 	jc	formatting_error
@@ -1058,10 +1060,10 @@ FAT32_f_10:
 
 	; If there are, format remain sectors which are
 	; at beyond of data clusters, with zero bytes.
-	
+
 	mov	cx, [bp+1Ch]	; [BPB_HiddSec]
 	mov	bx, [bp+1Eh]	; [BPB_HiddSec+2]
-FAT16_f_18:	
+FAT16_f_18:
 	add	cx, [bp+20h]	; [BPB_TotSec32]
 	adc	bx, [bp+22h]	; [BPB_TotSec32+2]
 FAT16_f_19:
@@ -1076,7 +1078,7 @@ FAT12_f_8:
 				 ; If BX is not zero,
 				 ; it is better to skip this stage...)
 	or	cx, cx
-	jz	short FAT32_f_12 ; no.. 
+	jz	short FAT32_f_12 ; no..
 				 ; (good! FAT contains all data sectors)
 FAT32_f_11:
 	push	cx
@@ -1128,7 +1130,7 @@ svn_0:
 	lodsb
 	cmp	al, 20h
 	ja	short svn_2
-	je	short svn_0 
+	je	short svn_0
 svn_1:
 	mov	si, no_name
 	lodsb
@@ -1190,7 +1192,7 @@ write_volume_serial:
 
 	;add	cx, dx
 	;add	[si+2], cx
-               
+
 	;mov	ah, 04h			; Return Current Date
 	;int	1Ah
 
@@ -1224,13 +1226,13 @@ write_volume_serial:
 
 	mov	al, dl
 	call	bcd_to_bin
-	mov	dl, al 
+	mov	dl, al
 	mov	al, dh
 	call	bcd_to_bin
-	mov	dh, al 
+	mov	dh, al
 	mov	al, cl
 	call	bcd_to_bin
-	mov	cl, al 
+	mov	cl, al
 	mov	al, ch
 	call	bcd_to_bin
 	mov	ch, al
@@ -1239,12 +1241,12 @@ write_volume_serial:
 	; DL = Day (1-31)
 	; CX = Year (1900-2099)
 
-	push	dx 
+	push	dx
 	push	cx
 
 	mov	ah, 02h		; Return Current Time
 	int	1Ah
-	
+
 	; DH = Seconds (BCD)	(59h)
 	; CL = Minutes (BCD)	(59h)
 	; CH = Hours (BCD)	(23h)
@@ -1252,13 +1254,13 @@ write_volume_serial:
 
 	mov	al, dh
 	call	bcd_to_bin
-	mov	dh, al 
+	mov	dh, al
 	mov	al, cl
 	call	bcd_to_bin
-	mov	cl, al 
+	mov	cl, al
 	mov	al, ch
 	call	bcd_to_bin
-	mov	ch, al 
+	mov	ch, al
 
 	; CH = Hour (0-23)
 	; CL = Minutes (0-59)
@@ -1343,7 +1345,7 @@ write_formatting_msg:
 	mov	dx, [dosp_size+2]
 
 	; DX_AX = Total sectors for percentage
-	mov	cx, 100	
+	mov	cx, 100
 	call	div32
 	mov	[format_percent], ax
 
@@ -1470,7 +1472,7 @@ format_FAT16_fs:
 	mov	si, bs_oem_name
 	mov	cx, 4
 	rep	movsw
- 
+
 	;mov	[bp+3Eh], ax	; [loc_3E]
 	; 04/05/2024 (BugFix)
 	cmp	dl, 6
@@ -1493,7 +1495,7 @@ FAT16_f_x:
 	jnz	short FAT16_f_0
 	mov	[bp+13h], ax	; [BPB_TotSec16]
 	; CX = 0
-	;mov	[bp+20h], cx	; [BPB_TotSec32] =  0
+	;mov	[bp+20h], cx	; [BPB_TotSec32] = 0
 	;mov	[bp+22h], cx	; [BPB_TotSec32+2] = 0
 	jmp	short FAT16_f_1
 FAT16_f_0:
@@ -1514,14 +1516,14 @@ FAT16_f_1:
 FAT16_f_2:
 	cmp	dx, 4  ; >= 262144 sectors ; >=128MB
 	ja	short FAT16_f_3 ; >4 sectors per cluster
-	jb	short FAT16_f_9 ; 4 sectors per cluster	
+	jb	short FAT16_f_9 ; 4 sectors per cluster
 	or	ax, ax ; dx_ax = (4*65536)+0
 	jz	short FAT16_f_9 ; 4 sectors per cluster
 	jmp	short FAT16_f_8 ; 8 sectors per cluster
 FAT16_f_3:
 	cmp	dx, 8  ; >= 524288 sectors ; >=256MB
 	ja	short FAT16_f_4 ; >8 sectors per cluster
-	jb	short FAT16_f_8 ; 8 sectors per cluster	
+	jb	short FAT16_f_8 ; 8 sectors per cluster
 	and	ax, ax ; dx_ax = (8*65536)+0
 	jz	short FAT16_f_8 ; 8 sectors per cluster
 	jmp	short FAT16_f_7 ; 16 sectors per cluster
@@ -1542,23 +1544,23 @@ FAT16_f_5:
 	shl	cl, 1
 FAT16_f_6:
 	; 32 sectors per cluster (for <= 2GB volumes)
-	shl	cl, 1	
+	shl	cl, 1
 FAT16_f_7:
 	; 16 sectors per cluster (for <= 1GB volumes)
 	shl	cl, 1
 FAT16_f_8:
 	; 8 sectors per cluster (for <= 512MB volumes)
-	shl	cl, 1	
+	shl	cl, 1
 FAT16_f_9:
 	; 4 sectors per cluster (for <= 256MB volumes)
-	shl	cl, 1	
-FAT16_f_10:	
+	shl	cl, 1
+FAT16_f_10:
 	; 2 sectors per cluster (for <= 128MB volumes)
 	mov	[bp+0Dh], cl	 ; [BPB_SecPerClus]
-	;mov	byte [bp+10h], 2 ; [BPB_NumFATs] 
-	;mov	word [bp+0Eh], 1 ; [BPB_RsvdSecCnt] 
+	;mov	byte [bp+10h], 2 ; [BPB_NumFATs]
+	;mov	word [bp+0Eh], 1 ; [BPB_RsvdSecCnt]
 	;mov	word [bp+11h], 512 ; [BPB_RootEntCnt]
-	
+
 	; Calculating FAT size in sectors
 	; (According to MS FAT32 FS Specification, 2000)
 
@@ -1577,7 +1579,7 @@ FAT16_f_10:
 	;shl	bx, 8 ; * 256
 	mov	bh, cl
 	xor	bl, bl
-	mov	cl, 2 ; [BPB_NumFATs] 
+	mov	cl, 2 ; [BPB_NumFATs]
 	add	bx, cx	
 		; TmpVal2 = (256*BPB_SecPerClus)+BPB_NumFATs
 	mov	cx, bx
@@ -1594,7 +1596,7 @@ FAT16_f_10:
 	; AX = [BPB_NumFATs] * [BPB_FATSz16]
 	mov	cx, [bp+0Eh]	; [BPB_RsvdSecCnt] ; 1
 	add	cx, ax
-	
+
 	; 15/07/2024 (bugfix)
 	mov	[bp+42h], cx	; bsRootDirStart
 	mov	bx, [root_dir_secs]
@@ -1609,7 +1611,7 @@ FAT16_f_10:
 	; BX_CX = [BPB_RsvdSecCnt]+([BPB_NumFATs]*[BPB_FATSz16])
 	;	  + RootDirSectors
 	mov	ax, [bp+13h]	; [BPB_TotSec16]
-	;sub	dx, dx 
+	;sub	dx, dx
 	; DX = 0
 	and	ax, ax
 	jnz	short FAT16_f_11
@@ -1639,7 +1641,7 @@ FAT16_f_11:
 	call	write_volume_name
 	lea	si, [bp+39] ; [BS_VolID]
 	call	write_volume_serial
-	call	write_cluster_count	
+	call	write_cluster_count
 
 	call	write_formatting_msg
 	mov	al, 0
@@ -1704,7 +1706,7 @@ FAT16_f_13:
 	jmp	short FAT16_f_15
 FAT16_f_14:	
 	push	bx
-	push	cx	
+	push	cx
 	mov	bx, HDFORMAT_FATBUFFER
 	call	write_hd_sector
 	jc	formatting_error
@@ -1741,7 +1743,7 @@ FAT16_f_16:
 	inc	bx ; 0 -> 1, 1-> 2
 FAT16_f_17:	
 	push	bx
-	push	cx	
+	push	cx
 	mov	bx, HDFORMAT_SECBUFFER
 	call	write_hd_sector
 	jc	formatting_error
@@ -1757,7 +1759,7 @@ FAT16_f_17:
 
 	; If there are, format remain sectors which are
 	; at beyond of data clusters, with zero bytes.
-	
+
 	mov	cx, [bp+1Ch]	; [BPB_HiddSec]
 	mov	bx, [bp+1Eh]	; [BPB_HiddSec+2]
 
@@ -1826,7 +1828,7 @@ FAT12_f_1:
 	;mov	byte [bp+10h], 2 ; [BPB_NumFATs] 
 	;mov	word [bp+0Eh], 1 ; [BPB_RsvdSecCnt] 
 	;mov	word [bp+11h], 512 ; [BPB_RootEntCnt]
-	
+
 	; Calculating FAT size in sectors
 	; AX = partition (volume) size in sectors
 	; CX = sectors per clusters
@@ -1842,9 +1844,9 @@ FAT12_f_1:
 	adc	ax, 0  ; +0.5 -> +1
 
 	; AX = FAT bytes for 12 bit cluster numbers
-	
+
 	mov	cx, 512		; [BPB_BytesPerSec]
-	add	ax, cx		
+	add	ax, cx
 	dec	ax		; [BPB_BytesPerSec] - 1
 	sub	dx, dx
 	div	cx
@@ -1897,7 +1899,7 @@ FAT12_f_9:
 	xor	dx, dx
 	mov	[data_start], cx
 	mov	[data_start+2], dx ; 0
-	
+
 	; 15/07/2024 (bugfix)
 	mov	 [bp+40h], cx	; bsDataStart
 
@@ -1978,14 +1980,14 @@ FAT12_f_3:
 	mov	[bx], cx
 	mov	[bx+2], cl
 	jmp	short FAT12_f_5
-FAT12_f_4:	
+FAT12_f_4:
 	push	bx
-	push	cx	
+	push	cx
 	mov	bx, HDFORMAT_FATBUFFER
 	call	write_hd_sector
 	jc	formatting_error
 	call	write_format_percent
-FAT12_f_5:	
+FAT12_f_5:
 	pop	cx
 	pop	bx
 	add	ax, 1
@@ -2017,7 +2019,7 @@ FAT12_f_6:
 	;inc	bx
 FAT12_f_7:	
 	;push	bx
-	push	cx	
+	push	cx
 	mov	bx, HDFORMAT_SECBUFFER
 	call	write_hd_sector
 	jc	formatting_error
@@ -2033,7 +2035,7 @@ FAT12_f_7:
 
 	; If there are, format remain sectors which are
 	; at beyond of data clusters, with zero bytes.
-	
+
 	mov	cx, [bp+1Ch]	; [BPB_HiddSec]
 	mov	bx, [bp+1Eh]	; [BPB_HiddSec+2]
 
@@ -2087,7 +2089,7 @@ loc_beep:
 	mov     al, 7
 	int     10h
 	jmp     short read_next_char
-loc_arrow:    
+loc_arrow:
 	cmp     ah, 4Bh
 	je      short loc_back
 	cmp     ah, 53h
@@ -2141,7 +2143,7 @@ div32:
 	; Result: DX_AX, BX (remainder)
 	mov	bx, ax
 	;or	dx, ax ; * DX_AX = 0 ?
-	;jz	short div32_retn ; yes, do not divide! 
+	;jz	short div32_retn ; yes, do not divide!
 	mov	ax, dx
         xor	dx, dx
         div	cx	; at first, divide DX
@@ -2206,7 +2208,7 @@ bin_to_hex:
 	xchg	bl, al
 	and	bl, 0Fh
 	mov	ah, [bx+hexchrs]
-	pop	bx	
+	pop	bx
 	retn
 
 ; ----------------------------------------------------------------------------
@@ -2228,10 +2230,10 @@ trdos386fc:
 
 RD_FAT12_hd_bs:
 	incbin	'RD5HDBS1.BIN' ; 20/04/2024
-RD_FAT16_hd_bs: 
+RD_FAT16_hd_bs:
 	incbin	'RD5HDBS2.BIN' ; 20/04/2024
-RD_FAT32_hd_bs: 
-	incbin	'RD5HDBS3.BIN' ; 29/04/2024
+RD_FAT32_hd_bs:
+	incbin	'RD5HDBS3.BIN' ; 29/01/2026
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;  messages
@@ -2251,7 +2253,7 @@ RD_Welcome:
 	db 0Dh, 0Ah
 	db 'Retro DOS v5 Hard Disk Partition Formatting Utility '
 	db 0Dh, 0Ah
-	db 'RDHDFORM v2.0.240715 (c) Erdogan TAN 2020-2024 '
+	db 'RDHDFORM v2.0.260129 (c) Erdogan TAN 2020-2026 '
 	db 0Dh,0Ah
 	db 0Dh,0Ah
 	db 'Usage: r5hdform <drive> '
@@ -2268,7 +2270,7 @@ RD_Welcome:
 	db 0Dh, 0Ah
 	db 0Dh, 0Ah
 	db ' Example: hdformat hd0 ', 0Dh, 0Ah
-	db 0Dh, 0Ah	
+	db 0Dh, 0Ah
 	db 'Optional: hdformat -partition <drive> ', 0Dh, 0Ah
 	db 0Dh, 0Ah
 	db ' Example: hdformat -1 hd1 (partition 1 on 2nd disk) '
@@ -2357,7 +2359,7 @@ hexchrs:
 	db	'0123456789ABCDEF'
 
 Cursor_Pos: ; dw 0
-CHS_limit:  ; dword	 
+CHS_limit:  ; dword
 	dw 0
 	;dw 0
 

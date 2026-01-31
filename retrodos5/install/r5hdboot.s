@@ -2,7 +2,7 @@
 ; R5HDBOOT.ASM (R5HDBOOT.COM) - Retro DOS v5 Hard Disk Boot Sector Utility
 ;						       (for MSDOS/WINDOWS)
 ; ----------------------------------------------------------------------------
-; Last Update: 03/05/2024
+; Last Update: 29/01/2026
 ; ----------------------------------------------------------------------------
 ; Beginning: 03/05/2024
 ; ----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ partition_table equ 1BEh
 
 	mov	si, 80h			; PSP command tail
 	mov	cl, [si]
-	or	cl, cl                               
+	or	cl, cl
 	jz	short T_9		; jump if zero
 T_1:
 	inc	si
@@ -125,12 +125,12 @@ T_3:
 	jb	short T_9
 	je	short T_6
 	;cmp	al, 'Z'			; A - Z
-	;jna	short T_6                   
+	;jna	short T_6
 	cmp	al, 'D'
 	jna	short T_6
 	cmp	al, 'Z'
 	jna	short T_9
-T_4:	
+T_4:
 	cmp	al, 'c'			; a - z 
 	jb	short T_9
 	je	short T_5
@@ -183,7 +183,7 @@ T_10:
 
 	or	ah, ah
 	jnz	short T_12		; error
-	
+
 	mov	al, cl
 	and	al, 63
 	mov	[sectors], al
@@ -211,7 +211,7 @@ T_10:
 					; sector = 1
 	mov	dh, 0			; head = 0
 	;mov	dl, [RD5_Drive]	; drive 
-	;add	dl, 80h -'0'		; make it 80h based 
+	;add	dl, 80h -'0'		; make it 80h based
 	mov	dl, [drv]
 T_11:
 	mov	ax, 0201h
@@ -234,7 +234,7 @@ T_13:
 T_14:
 	call	validate_primary_dos_partition
 	jnc	short T_15
- 
+
 	add	si, 16
 	cmp	si, MBR+partition_table+ptFileSystemID+64
 	jb	short T_14
@@ -242,7 +242,7 @@ T_14:
 	mov	si, RD5_fatp_notfound
 	call	print_msg
 	jmp	T_35
-	
+
 T_15:
 	; valid primary dos partition
 	; al = FAT type (1,2,3)
@@ -323,7 +323,7 @@ T_21:
 	push    es
 	push    bx
 	;push	1			; db 6Ah, 01h
-	db	6Ah, 01h                     
+	db	6Ah, 01h
 	;push	10h                     ; db 6Ah, 10h
 	db	6Ah, 10h
 
@@ -337,13 +337,13 @@ T_21:
 	;popa
 	db	61h
 	jnc     short T_22
-                
+
         dec	byte [RetryCount]
 	jz	T_12
 
 	mov	ax, [dosp_start]
 	mov	dx, [dosp_start+2]
-	jmp	short T_21	 
+	jmp	short T_21
 
 T_22:
 	cmp	word [bootsector+510], 0AA55h
@@ -364,7 +364,7 @@ T_22:
 	jne	short T_23
 
 	mov	cx, 54-11 ; byte count to be copied
-	
+
 	mov	al, [bootsector+bsFileSysType+4]
 	cmp	al, '6'
 	je	short T_25
@@ -387,7 +387,7 @@ T_24:
 	cmp	byte [bootsector+BS_FilSysType+4], '2'
 	jne	short T_23
 
-	mov	cx, 82-11 ; byte count to be copied 
+	mov	cx, 82-11 ; byte count to be copied
 T_25:
 	mov	si, RD5_Do_you_want
 	call	print_msg
@@ -434,10 +434,10 @@ T_27:
 	stosw
 	mov	ax, 'OS'
 	stosw
-	
+
 	; DI points to retrodosv5bs+bsBytesPerSec
 	mov	si, bootsector+bsBytesPerSec
-	
+
 	rep	movsb
 
 	mov	si, RD5_PressKeyWhenReady
@@ -459,25 +459,25 @@ T_29:
 T_30:
 	;xor	ax, ax
 	;int	1Ah			; get time of day
-	
+
 	;mov	si, volume_id
-	
+
 	;mov	[si], dx
 	;mov	[si+2], cx		; set unique volume ID
-	
+
 	;mov	ah, 02h			; Return Current Time
 	;int	1Ah
 	;xchg	ch, cl
 	;xchg	dh, dl
-	
+
 	;add	cx, dx
 	;add	[si+2], cx
-		
+
 	;mov	ah, 04h			; Return Current Date
 	;int	1Ah
 	;xchg	ch, cl
 	;xchg	dh, dl
-	
+
 	;add	cx, dx  
 	;add	[si+2], cx
 
@@ -486,8 +486,8 @@ T_30:
 
 	mov	bx, [retrodosv5bs]	; location of boot code
 	; es: bx = boot sector buffer address
-	
-	;mov	si, bx	
+
+	;mov	si, bx
 	;add	si, bsVolumeID
 
 	;cmp	byte [fattype], 3
@@ -581,7 +581,7 @@ T_36:
 	;cmp	al, 'N'
 	;je	short T_35
 	;cmp	al, 'C'-40h
-	;je	short T_35                   
+	;je	short T_35
 	;cmp	al, 27
 	;je	short T_35
 	;jmp	short T_36
@@ -611,7 +611,7 @@ T_38:
 T_39:
 _NO_:
 	retn
-		 
+
 get_answer:
 	xor	ax, ax
 	int	16h			; wait for keyboard command
@@ -682,17 +682,17 @@ T_44:
 	;jnb	short T_37
 	xchg	cl, ch
 	shl	cl, 6
-	or	cl, al	
+	or	cl, al
 	jmp	T_31
 
 validate_primary_dos_partition:
-	
+
 	; INPUT:
-	;   si = partition table entry offset + file system ID 
+	;   si = partition table entry offset + file system ID
 	; OUTPUT:
 	;   cf = 0 -> ah = primary DOS partition ID
 	;			 (01h,04h,06h,0Bh,0Ch,0Eh)
-	;	      al = FAT type 
+	;	      al = FAT type
 	;			1 = FAT12
 	;			2 = FAT16
 	;			3 = FAT32
@@ -729,7 +729,7 @@ V_2:
 	jb	short V_5
 V_3:
 	inc	al ; 0->1, 1->2, 2->3
-	retn 
+	retn
 V_4:
 	cmp	ah, 0Eh	; FAT16 LBA partition
 	jne	short V_1
@@ -756,10 +756,10 @@ retrodosv5bs:
 
 	; 03/05/2024
 RD5_FAT32_hd_bs:
-	incbin	'RD5HDBS3.BIN'  ; 29/04/2024
-RD5_FAT16_hd_bs: 
+	incbin	'RD5HDBS3.BIN'  ; 29/01/2026
+RD5_FAT16_hd_bs:
 	incbin	'RD5HDBS2.BIN'  ; 20/04/2024
-RD5_FAT12_hd_bs: 
+RD5_FAT12_hd_bs:
 	incbin	'RD5HDBS1.BIN'  ; 20/04/2024
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -779,7 +779,7 @@ RD5_Welcome:
 	db 0Dh, 0Ah
 	db 'Retro DOS v5.0 Hard Disk Boot Sector Update Utility '
 	db 0Dh, 0Ah
-	db 'RDHDBOOT v5.0.240503  (c) Erdogan TAN 2018-2024'
+	db 'RDHDBOOT v5.0.260129  (c) Erdogan TAN 2018-2026'
 	db 0Dh,0Ah
 	db 0Dh,0Ah
 	db 'Usage: r5hdboot <drive> '
@@ -800,7 +800,7 @@ RD5_Welcome:
 
 RD5_Do_you_want:
 	db 0Dh, 0Ah
-	db "WARNING ! ", 0Dh, 0Ah 
+	db "WARNING ! ", 0Dh, 0Ah
 	db "(If you say 'Yes', MSDOS or WINDOWS will not be bootable on this disk !) "
 	db 0Dh, 0Ah, 0Dh, 0Ah
 	;db "Do you want to update boot sector to TRDOS 386 v2 format ? (Y/N) "

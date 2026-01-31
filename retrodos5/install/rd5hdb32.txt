@@ -2,7 +2,7 @@
      2                                  ; RD5HDB32.ASM (RD5HDB32.COM) - Retro DOS v5 Hard Disk FAT32 Boot Sect Utility
      3                                  ;							  (for MSDOS/WINDOWS)
      4                                  ; ----------------------------------------------------------------------------
-     5                                  ; Last Update: 03/05/2024
+     5                                  ; Last Update: 29/01/2026
      6                                  ; ----------------------------------------------------------------------------
      7                                  ; Beginning: 03/05/2024
      8                                  ; ----------------------------------------------------------------------------
@@ -92,7 +92,7 @@
     92                                  
     93 00000000 BE8000                  	mov	si, 80h			; PSP command tail
     94 00000003 8A0C                    	mov	cl, [si]
-    95 00000005 08C9                    	or	cl, cl                               
+    95 00000005 08C9                    	or	cl, cl
     96 00000007 7437                    	jz	short T_9		; jump if zero
     97                                  T_1:
     98 00000009 46                      	inc	si
@@ -112,7 +112,7 @@
    112 0000001E 7610                    	jna	short T_6
    113 00000020 3C5A                    	cmp	al, 'Z'
    114 00000022 761C                    	jna	short T_9
-   115                                  T_4:	
+   115                                  T_4:
    116 00000024 3C63                    	cmp	al, 'c'			; a - z 
    117 00000026 7218                    	jb	short T_9
    118 00000028 7404                    	je	short T_5
@@ -162,7 +162,7 @@
    162                                  
    163 00000051 08E4                    	or	ah, ah
    164 00000053 753B                    	jnz	short T_12		; error
-   165                                  	
+   165                                  
    166 00000055 88C8                    	mov	al, cl
    167 00000057 243F                    	and	al, 63
    168 00000059 A2[5C09]                	mov	[sectors], al
@@ -204,14 +204,14 @@
    204 00000098 E9B301                  	jmp	T_35 			; terminate
    205                                  
    206                                  T_13:
-   207 0000009B 813E[660B]55AA          	cmp	word [MBR+510], 0AA55h 
+   207 0000009B 813E[660B]55AA          	cmp	word [MBR+510], 0AA55h
    208 000000A1 75ED                            jne	short T_12
    209                                  
    210 000000A3 BE[2A0B]                	mov	si, MBR+(partition_table+ptFileSystemID)
    211                                  T_14:
    212 000000A6 E84A02                  	call	validate_dos_FAT32_partition
    213 000000A9 7312                    	jnc	short T_15
-   214                                   
+   214                                  
    215 000000AB 83C610                  	add	si, 16
    216 000000AE 81FE[6A0B]              	cmp	si, MBR+partition_table+ptFileSystemID+64
    217 000000B2 72F2                    	jb	short T_14
@@ -219,14 +219,14 @@
    219 000000B4 BE[1C09]                	mov	si, RD5_fatp_notfound
    220 000000B7 E8AB01                  	call	print_msg
    221 000000BA E99101                  	jmp	T_35
-   222                                  	
+   222                                  
    223                                  T_15:
    224                                  	; valid primary dos (FAT32) partition
    225                                  	; ah = partition type
    226                                  
    227                                  	; 03/05/2024
    228 000000BD C606[5509]03            	mov	byte [fattype], 3  ; FAT32
-   229                                  T_17:	
+   229                                  T_17:
    230 000000C2 C606[5609]05            	mov	byte [RetryCount], 5
    231                                  
    232 000000C7 83C604                  	add	si, ptStartSector-ptFileSystemID
@@ -301,13 +301,13 @@
    301                                  	;popa
    302 0000013E 61                      	db	61h
    303 0000013F 7311                    	jnc     short T_22
-   304                                                  
+   304                                  
    305 00000141 FE0E[5609]                      dec	byte [RetryCount]
    306 00000145 0F8447FF                	jz	T_12
    307                                  
    308 00000149 A1[6009]                	mov	ax, [dosp_start]
    309 0000014C 8B16[6209]              	mov	dx, [dosp_start+2]
-   310 00000150 EBD4                    	jmp	short T_21	 
+   310 00000150 EBD4                    	jmp	short T_21
    311                                  
    312                                  T_22:
    313 00000152 813E[660B]55AA          	cmp	word [bootsector+510], 0AA55h
@@ -335,7 +335,7 @@
    334 0000018B 803E[BE09]32            	cmp	byte [bootsector+BS_FilSysType+4], '2'
    335 00000190 75D7                    	jne	short T_23
    336                                  
-   337 00000192 B94700                  	mov	cx, 82-11 ; byte count to be copied 
+   337 00000192 B94700                  	mov	cx, 82-11 ; byte count to be copied
    338                                  T_25:
    339 00000195 BE[9207]                	mov	si, RD5_Do_you_want
    340 00000198 E8CA00                  	call	print_msg
@@ -382,10 +382,10 @@
    381 000001C2 AB                      	stosw
    382 000001C3 B84F53                  	mov	ax, 'OS'
    383 000001C6 AB                      	stosw
-   384                                  	
+   384                                  
    385                                  	; DI points to retrodosv5bs+bsBytesPerSec
    386 000001C7 BE[7309]                	mov	si, bootsector+bsBytesPerSec
-   387                                  	
+   387                                  
    388 000001CA F3A4                    	rep	movsb
    389                                  
    390 000001CC BE[4208]                	mov	si, RD5_PressKeyWhenReady
@@ -407,26 +407,26 @@
    406                                  T_30:
    407                                  	;xor	ax, ax
    408                                  	;int	1Ah			; get time of day
-   409                                  	
+   409                                  
    410                                  	;mov	si, volume_id
-   411                                  	
+   411                                  
    412                                  	;mov	[si], dx
    413                                  	;mov	[si+2], cx		; set unique volume ID
-   414                                  	
+   414                                  
    415                                  	;mov	ah, 02h			; Return Current Time
    416                                  	;int	1Ah
    417                                  	;xchg	ch, cl
    418                                  	;xchg	dh, dl
-   419                                  	
+   419                                  
    420                                  	;add	cx, dx
    421                                  	;add	[si+2], cx
-   422                                  		
+   422                                  
    423                                  	;mov	ah, 04h			; Return Current Date
    424                                  	;int	1Ah
    425                                  	;xchg	ch, cl
    426                                  	;xchg	dh, dl
-   427                                  	
-   428                                  	;add	cx, dx  
+   427                                  
+   428                                  	;add	cx, dx
    429                                  	;add	[si+2], cx
    430                                  
    431                                  	;mov	ax, [vol_id]
@@ -434,8 +434,8 @@
    433                                  
    434 000001EA BB[0003]                	mov	bx, RD5_FAT32_hd_bs	; location of boot code
    435                                  	; es: bx = boot sector buffer address
-   436                                  	
-   437                                  	;mov	si, bx	
+   436                                  
+   437                                  	;mov	si, bx
    438                                  	;add	si, bsVolumeID
    439                                  
    440                                  	;cmp	byte [fattype], 3
@@ -529,7 +529,7 @@
    528                                  	;cmp	al, 'N'
    529                                  	;je	short T_35
    530                                  	;cmp	al, 'C'-40h
-   531                                  	;je	short T_35                   
+   531                                  	;je	short T_35
    532                                  	;cmp	al, 27
    533                                  	;je	short T_35
    534                                  	;jmp	short T_36
@@ -609,9 +609,9 @@
    608                                  	;jnb	short T_37
    609 000002C8 86CD                    	xchg	cl, ch
    610 000002CA C0E106                  	shl	cl, 6
-   611 000002CD 08C1                    	or	cl, al	
+   611 000002CD 08C1                    	or	cl, al
    612 000002CF E92EFF                  	jmp	T_31
-   613                                  		 
+   613                                  
    614                                  get_answer:
    615 000002D2 31C0                    	xor	ax, ax
    616 000002D4 CD16                    	int	16h			; wait for keyboard command
@@ -634,9 +634,9 @@
    633 000002F2 C3                      	retn
    634                                  
    635                                  validate_dos_FAT32_partition:
-   636                                  	
+   636                                  
    637                                  	; INPUT:
-   638                                  	;   si = partition table entry offset + file system ID 
+   638                                  	;   si = partition table entry offset + file system ID
    639                                  	; OUTPUT:
    640                                  	;   cf = 0 -> ah = primary DOS partition ID
    641                                  	;			 (0Bh or 0Ch)
@@ -673,7 +673,7 @@
    672                                  
    673                                  	; 03/05/2024
    674                                  RD5_FAT32_hd_bs:
-   675 00000300 <bin 400h>              	incbin	'RD5HDBS3.BIN'  ; 29/04/2024
+   675 00000300 <bin 400h>              	incbin	'RD5HDBS3.BIN'  ; 29/01/2029
    676                                  
    677                                  ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    678                                  ;  messages
@@ -698,12 +698,12 @@
    692 00000733 557064617465205574-
    692 0000073C 696C69747920       
    693 00000742 0D0A                    	db 0Dh, 0Ah
-   694 00000744 52444844424F4F5420-     	db "RDHDBOOT v4.0.240420  (c) Erdogan TAN 2018-2024"
-   694 0000074D 76342E302E32343034-
-   694 00000756 323020202863292045-
+   694 00000744 52444844424F4F5420-     	db "RDHDBOOT v4.0.260129  (c) Erdogan TAN 2018-2026"
+   694 0000074D 76342E302E32363031-
+   694 00000756 323920202863292045-
    694 0000075F 72646F67616E205441-
    694 00000768 4E20323031382D3230-
-   694 00000771 3234               
+   694 00000771 3236               
    695 00000773 0D0A                    	db 0Dh,0Ah
    696 00000775 0D0A                    	db 0Dh,0Ah
    697 00000777 55736167653A207264-     	db 'Usage: rd5hdb32 c: (or d:)'
@@ -713,7 +713,7 @@
    699                                  
    700                                  RD5_Do_you_want:
    701 00000792 0D0A                    	db 0Dh, 0Ah
-   702 00000794 5741524E494E472021-     	db "WARNING ! ", 0Dh, 0Ah 
+   702 00000794 5741524E494E472021-     	db "WARNING ! ", 0Dh, 0Ah
    702 0000079D 200D0A             
    703 000007A0 28496620796F752073-     	db "(If you say 'Yes', MSDOS or WINDOWS will not be bootable on this disk !) "
    703 000007A9 61792027596573272C-
@@ -806,7 +806,7 @@
    751                                  
    752                                  align 4
    753                                  
-   754                                  CHS_limit: 
+   754                                  CHS_limit:
    755 00000958 0000                    	dw 0
    756                                  	;dw 0
    757                                  
